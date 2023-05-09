@@ -11,11 +11,12 @@ def generate_holiday_list(path:str):
     
     return holiday_list
         
-def count_holiday(holiday_list:list, year:int, month:int, day:int=20):
+def count_days(holiday_list:list, year:int, month:int, day:int=20):
     try:
         current_day = datetime.datetime(year, month - 1, day).date()
     except:
         current_day = datetime.datetime(year-1, 12, day).date()
+    day_count = 0
     holiday_count = 0
     
     def is_holiday(holiday_list:list, current_day:datetime.date):
@@ -27,13 +28,14 @@ def count_holiday(holiday_list:list, year:int, month:int, day:int=20):
             return False
     
     while True:
+        day_count += 1
         if is_holiday(holiday_list, current_day):
             holiday_count += 1
         current_day += datetime.timedelta(days=1)
         if current_day.day == day:
             break
     
-    return holiday_count
+    return (day_count, holiday_count, 8 * (day_count - holiday_count) )
 
 year = 2023
 month = 7
@@ -41,8 +43,8 @@ next_month = 1
 holiday_list = generate_holiday_list(f'./data/{year}_holiday.csv')
 
 while month < 13:
-    print(f'{month}: {count_holiday(holiday_list,year,month)}')
+    print(f'{month}: {count_days(holiday_list,year,month)}')
     month += 1
 while next_month < 7:
-    print(f'{next_month}: {count_holiday(holiday_list, year + 1, next_month)}')
+    print(f'{next_month}: {count_days(holiday_list, year + 1, next_month)}')
     next_month += 1
